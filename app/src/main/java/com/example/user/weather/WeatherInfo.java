@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,12 +83,25 @@ public class WeatherInfo extends AppCompatActivity {
         }
         String windDegree = windDegree(windDeg);
         String weather = "";
+
+        JSONArray w = null;
         try {
-             weather = jsonObj.getString("weather");
+            w = jsonObj.getJSONArray("weather");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        weather = currentWeather(weather);
+        JSONObject currentWeather1 = null;
+        try {
+            currentWeather1 = w.getJSONObject(0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            weather = currentWeather1.getString("description");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         tVCity.setText(tVCity.getText() + "\t\t" + city + ", страна: " + coutry);
         tVTemp.setText(tVTemp.getText() + "\t\t" + Double.toString(temp) + "°C");
@@ -122,15 +136,5 @@ public class WeatherInfo extends AppCompatActivity {
         else
             windDegree = "СЗ";
         return windDegree;
-    }
-    private String currentWeather(String s) {
-        char[] c = s.substring(39).toCharArray();
-        s = "";
-        int i = 0;
-        while (c[i] != '"') {
-            s += c[i];
-            i++;
-        }
-        return s;
     }
 }
